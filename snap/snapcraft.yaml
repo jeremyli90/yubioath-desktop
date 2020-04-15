@@ -141,6 +141,10 @@ parts:
       eval "$(pyenv init -)"
       pyenv global 3.8.1
       snapcraftctl build
+    stage-packages:
+      - qt514base
+      - qt514declarative
+      - qt514svg
 
   pcsc-lite:
     plugin: autotools
@@ -152,6 +156,7 @@ parts:
       - --enable-confdir=/snap/yubioath-desktop/current/etc/reader.conf.d
       - --enable-usbdropdir=/snap/yubioath-desktop/current/usr/lib/pcsc/drivers
       - --prefix=/snap/yubioath-desktop/current/usr
+      - --disable-documentation
     build-packages:
       - gcc
       - pkg-config
