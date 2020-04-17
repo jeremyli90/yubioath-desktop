@@ -25,7 +25,7 @@ ColumnLayout {
         Layout.fillWidth: true
         width: parent.width
         spacing: 4
-        visible: app.height > 365
+        visible: app.height > 462
 
         Rectangle {
             width: 100
