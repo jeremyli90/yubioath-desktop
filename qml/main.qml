@@ -14,7 +14,7 @@ ApplicationWindow {
     width: 300
     height: 502
     minimumWidth: 300
-    minimumHeight: 196
+    minimumHeight: 272
     visible: false
 
     flags: Qt.Window | Qt.WindowFullscreenButtonHint | Qt.WindowTitleHint

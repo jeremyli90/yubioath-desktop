@@ -18,21 +18,23 @@ ColumnLayout {
     Layout.fillWidth: true
 
     ColumnLayout {
-        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+        id: fullHeight
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        Layout.topMargin: 32
         Layout.bottomMargin: 16
         Layout.fillWidth: true
         width: parent.width
         spacing: 4
+        visible: app.height > 365
 
         Rectangle {
-            id: rectangle
             width: 100
             height: 100
             color: formHighlightItem
             radius: width * 0.5
             Layout.topMargin: 16
             Layout.bottomMargin: 16
-            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Image {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -103,7 +105,65 @@ ColumnLayout {
             onClicked: yubiKey.scanQr()
             Keys.onReturnPressed: yubiKey.scanQr()
             Keys.onEnterPressed: yubiKey.scanQr()
-            Layout.topMargin: 64+16+4
+            Layout.topMargin: 16
+        }
+    }
+
+    RowLayout {
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        Layout.topMargin: 32
+        Layout.bottomMargin: 16
+        Layout.fillWidth: true
+        width: parent.width
+        spacing: 4
+        visible: !fullHeight.visible
+
+        Rectangle {
+            width: 100
+            height: 100
+            color: formHighlightItem
+            radius: width * 0.5
+            Layout.topMargin: 16
+            Layout.bottomMargin: 16
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Image {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                sourceSize.width: 80
+                source: !!yubiKey.currentDevice ? yubiKey.getCurrentDeviceImage() : ""
+                fillMode: Image.PreserveAspectFit
+                visible: parent.visible
+            }
+        }
+
+        ColumnLayout {
+            spacing: 4
+            Layout.topMargin: 0
+            Layout.leftMargin: 16
+
+            Label {
+                text: !!yubiKey.currentDevice ? yubiKey.currentDevice.name : ""
+                font.pixelSize: 16
+                font.weight: Font.Normal
+                lineHeight: 1.8
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                color: primaryColor
+                opacity: highEmphasis
+            }
+
+            StyledTextField {
+                labelText: "Serial number"
+                text: !!yubiKey.currentDevice ? yubiKey.currentDevice.serial : ""
+                visible: !!yubiKey.currentDevice && !!yubiKey.currentDevice.serial
+                enabled: false
+            }
+
+            StyledTextField {
+                labelText: "Firmware version"
+                text: !!yubiKey.currentDevice ? yubiKey.currentDevice.version : ""
+                visible: !!yubiKey.currentDevice && yubiKey.currentDevice.version
+                enabled: false
+            }
         }
     }
 }
