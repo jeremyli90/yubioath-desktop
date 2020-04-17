@@ -15,38 +15,28 @@ ColumnLayout {
     width: app.width * 0.9 > 600 ? 600 : app.width * 0.9
     height: parent.height
 
-    function getDeviceDescription() {
-        if (!!yubiKey.currentDevice) {
-            return yubiKey.currentDevice.usbInterfacesEnabled.join('+')
-        } else if (yubiKey.availableDevices.length > 0
-                   && !yubiKey.availableDevices.some(dev => dev.selectable)) {
-            return qsTr("No compatible device found")
-        } else {
-            return qsTr("No device found")
-        }
-    }
-
     Layout.fillWidth: true
 
     ColumnLayout {
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
         Layout.bottomMargin: 16
         Layout.fillWidth: true
         width: parent.width
-        spacing: 0
+        spacing: 4
 
         Rectangle {
             id: rectangle
-            width: 140
-            height: 140
+            width: 100
+            height: 100
             color: formHighlightItem
             radius: width * 0.5
-            Layout.margins: 16
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.topMargin: 16
+            Layout.bottomMargin: 16
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             Image {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                sourceSize.width: 120
+                sourceSize.width: 80
                 source: !!yubiKey.currentDevice ? yubiKey.getCurrentDeviceImage() : ""
                 fillMode: Image.PreserveAspectFit
                 visible: parent.visible
@@ -58,60 +48,62 @@ ColumnLayout {
             font.pixelSize: 16
             font.weight: Font.Normal
             lineHeight: 1.8
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             color: primaryColor
             opacity: highEmphasis
         }
 
-        Label {
-            text: !!yubiKey.currentDevice ? "Serial number: " + yubiKey.currentDevice.serial : ""
-            visible: !!yubiKey.currentDevice && yubiKey.currentDevice.serial
-            color: primaryColor
-            opacity: lowEmphasis
-            font.pixelSize: 12
-            lineHeight: 1.2
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            wrapMode: Text.NoWrap
-            Layout.maximumWidth: parent.width
-            width: parent.width
-
+        StyledTextField {
+            labelText: "Serial number"
+            text: !!yubiKey.currentDevice ? yubiKey.currentDevice.serial : ""
+            visible: !!yubiKey.currentDevice && !!yubiKey.currentDevice.serial
+            enabled: false
         }
 
-        Label {
-            text: !!yubiKey.currentDevice ? "Firmware version: " + yubiKey.currentDevice.version : ""
+        StyledTextField {
+            labelText: "Firmware version"
+            text: !!yubiKey.currentDevice ? yubiKey.currentDevice.version : ""
             visible: !!yubiKey.currentDevice && yubiKey.currentDevice.version
-            color: primaryColor
-            opacity: lowEmphasis
-            font.pixelSize: 12
-            lineHeight: 1.2
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            wrapMode: Text.NoWrap
-            Layout.maximumWidth: parent.width
-            width: parent.width
+            enabled: false
         }
 
-        Label {
-            text: !!yubiKey.currentDevice ? qsTr("Enabled interfaces: ") + getDeviceDescription() : ""
-            color: primaryColor
-            opacity: lowEmphasis
-            font.pixelSize: 12
-            lineHeight: 1.2
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            wrapMode: Text.NoWrap
-            Layout.maximumWidth: parent.width
-            width: parent.width
+        Button {
+            id: configureDevice
+            text: qsTr("Configure device")
+            flat: true
+            focus: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            onClicked: navigator.goToSettings()
+            Keys.onReturnPressed: navigator.goToSettings()
+            Keys.onEnterPressed: navigator.goToSettings()
+            font.pixelSize: 10
+            font.bold: false
+            font.capitalization: Font.MixedCase
+            background: Rectangle {
+                    color: parent.hovered ? defaultElevated : "transparent"
+                    border.color: formUnderline
+                    border.width: 1
+                    radius: 4
+                    visible: border
+                    enabled: border
+                }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                enabled: false
+            }
+
         }
 
         StyledButton {
             id: addBtn
             text: qsTr("Add security codes")
-            enabled: true
             focus: true
-            Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             onClicked: yubiKey.scanQr()
             Keys.onReturnPressed: yubiKey.scanQr()
             Keys.onEnterPressed: yubiKey.scanQr()
-            Layout.topMargin: 14
+            Layout.topMargin: 64+16+4
         }
     }
 }
